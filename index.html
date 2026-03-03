@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Docente La Salle</title>
+    <style>
+        :root { --blue: #002855; --blue-light: #004b93; --gold: #ffc107; --white: #ffffff; }
+        body { 
+            margin: 0; font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;
+        }
+        /* Fondo animado */
+        body::before {
+            content: ""; position: absolute; width: 150%; height: 150%;
+            background: radial-gradient(circle, rgba(255,193,7,0.1) 0%, transparent 70%);
+            animation: pulse 10s infinite alternate; z-index: -1;
+        }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px;
+            padding: 60px; text-align: center; color: white; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            width: 85%; max-width: 1000px;
+        }
+        .logo-star { font-size: 5rem; color: var(--gold); margin-bottom: 10px; filter: drop-shadow(0 0 15px var(--gold)); }
+        h1 { font-size: 3rem; margin: 0; letter-spacing: 2px; text-transform: uppercase; }
+        p { font-size: 1.2rem; opacity: 0.8; margin-bottom: 40px; }
+
+        .grid-grados { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .btn-grado {
+            background: rgba(255, 255, 255, 0.9); color: var(--blue); padding: 40px;
+            border-radius: 20px; font-size: 1.8rem; font-weight: bold; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden;
+        }
+        .btn-grado::after {
+            content: "Primaria"; position: absolute; bottom: 10px; left: 0; right: 0;
+            font-size: 0.8rem; opacity: 0.5; text-transform: uppercase;
+        }
+        .btn-grado:hover {
+            background: var(--gold); color: var(--blue); transform: scale(1.05) translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 193, 7, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-panel">
+        <div class="logo-star">★</div>
+        <h1>Portal Curricular</h1>
+        <p>Hermanos de las Escuelas Cristianas - La Salle</p>
+        <div class="grid-grados">
+            <script>
+                for(let i=1; i<=6; i++) {
+                    document.write(`<button class="btn-grado" onclick="ir(${i})">${i}°</button>`);
+                }
+                function ir(n) { localStorage.setItem('gradoActual', n); window.location.href = 'grado.html'; }
+            </script>
+        </div>
+    </div>
+</body>
+</html>

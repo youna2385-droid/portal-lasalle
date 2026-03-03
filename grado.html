@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión Curricular La Salle</title>
+    <style>
+        :root { --blue: #002855; --gold: #ffc107; --bg: #f4f7f6; --white: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: var(--bg); }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--blue); color: white; padding: 25px; display: flex; flex-direction: column; }
+        .sidebar h2 { color: var(--gold); border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
+        .nav-btn { background: none; border: none; color: white; padding: 15px; text-align: left; cursor: pointer; border-radius: 10px; margin-bottom: 10px; font-size: 1rem; transition: 0.3s; }
+        .nav-btn:hover, .nav-btn.active { background: var(--gold); color: var(--blue); font-weight: bold; }
+        
+        /* Contenido */
+        .main { flex: 1; padding: 40px; overflow-y: auto; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .card { background: var(--white); border-radius: 15px; padding: 25px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        /* Archivos */
+        .file-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; padding: 0; list-style: none; margin-top: 15px; }
+        .file-item { background: #f9f9f9; border: 1px solid #eee; padding: 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .file-name { font-weight: bold; font-size: 0.85rem; color: var(--blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-actions { display: flex; gap: 5px; }
+        .btn-f { flex: 1; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: bold; text-decoration: none; text-align: center; }
+        .btn-view { background: var(--blue); color: white; }
+        .btn-down { background: var(--gold); color: var(--blue); }
+        
+        /* Tabla de Rúbricas Editables */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: var(--blue); color: white; padding: 10px; font-size: 0.8rem; }
+        th input { background: transparent; color: white; border: 1px dashed rgba(255,255,255,0.5); text-align: center; font-weight: bold; width: 90%; }
+        td { border: 1px solid #eee; padding: 8px; text-align: center; }
+        .input-student { border: none; border-bottom: 1px solid #ccc; width: 95%; padding: 4px; font-size: 0.85rem; }
+
+        .btn-main { background: var(--blue); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <h2 id="gradoTitle">Grado</h2>
+    <button class="nav-btn active" onclick="show('plan', this)">📋 Plan Anual</button>
+    <button class="nav-btn" onclick="show('eda', this)">🏗️ EDAs</button>
+    <button class="nav-btn" onclick="show('sesiones', this)">🏃 Sesiones (Rúbricas)</button>
+    <button class="nav-btn" onclick="window.location.href='index.html'" style="margin-top:auto; color:var(--gold)">← Volver</button>
+</aside>
+
+<main class="main">
+    <div id="plan" class="section active">
+        <h1>Plan Anual y Curricular</h1>
+        <div class="card">
+            <input type="file" id="inputPlan" onchange="subirArchivo('plan', this)">
+            <ul id="list-plan" class="file-list"></ul>
+        </div>
+    </div>
+
+    <div id="eda" class="section">
+        <h1>Experiencias de Aprendizaje</h1>
+        <div class="card">
+            <input type="file" id="inputEda" onchange="subirArchivo('eda', this)">
+            <ul id="list-eda" class="file-list"></ul>
+        </div>
+    </div>
+
+    <div id="sesiones" class="section">
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>Sesiones y Rúbricas</h1>
+            <button class="btn-main" onclick="nuevaSesion()">+ Nueva Sesión</button>
+        </div>
+        <div id="contenedor-sesiones"></div>
+        <button class="btn-main" style="background:#28a745; width:100%" onclick="guardarTodo()">💾 GUARDAR TODO EL SISTEMA</button>
+    </div>
+</main>
+
+<script>
+    const grado = localStorage.getItem('gradoActual') || "5";
+    document.getElementById('gradoTitle').innerText = grado + "° Primaria";
+
+    function show(id, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    // --- CORRECCIÓN DE ARCHIVOS (BASE64 + BLOB PARA PDF) ---
+    function subirArchivo(tipo, input, sesionId = null) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const key = sesionId ? `file_s_${sesionId}` : `file_${tipo}_${grado}`;
+            const files = JSON.parse(localStorage.getItem(key)) || [];
+            files.push({ name: file.name, data: e.target.result, type: file.type });
+            localStorage.setItem(key, JSON.stringify(files));
+            sesionId ? renderArchivosSesion(sesionId, input.nextElementSibling) : renderArchivosGeneral(tipo);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function abrirArchivo(base64Data, type) {
+        const bin = atob(base64Data.split(',')[1]);
+        const array = [];
+        for (let i = 0; i < bin.length; i++) array.push(bin.charCodeAt(i));
+        const blob = new Blob([new Uint8Array(array)], {type: type});
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    }
+
+    function renderArchivosGeneral(tipo) {
+        const list = document.getElementById(`list-${tipo}`);
+        list.innerHTML = '';
+        const files = JSON.parse(localStorage.getItem(`file_${tipo}_${grado}`)) || [];
+        files.forEach((f, i) => {
+            const li = document.createElement('li');
+            li.className = 'file-item';
+            li.innerHTML = `<span class="file-name">📄 ${f.name}</span>
+                <div class="file-actions">
+                    <button class="btn-f btn-view" onclick='abrirArchivo("${f.data}", "${f.type}")'>VER</button>
+                    <a class="btn-f btn-down" href="${f.data}" download="${f.name}">BAJAR</a>
+                </div>`;
+            list.appendChild(li);
+        });
+    }
+
+    // --- LÓGICA DE SESIONES CON CRITERIOS EDITABLES ---
+    const esc = { 'AD': 4, 'A': 3, 'B': 2, 'C': 1 };
+    const inv = { 4: 'AD', 3: 'A', 2: 'B', 1: 'C' };
+
+    function nuevaSesion(datos = null) {
+        const id = datos ? datos.id : Date.now();
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.dataset.id = id;
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                <input type="text" value="${datos?datos.titulo:'Sesión Nueva'}" class="input-student" style="font-weight:bold; font-size:1.1rem; width:70%">
+                <button onclick="this.parentElement.parentElement.remove()" style="color:red; border:none; background:none; cursor:pointer;">Eliminar Sesión</button>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div>
+                    <h4>📂 Documentos</h4>
+                    <input type="file" onchange="subirArchivo('ses', this, ${id})">
+                    <ul class="file-list"></ul>
+                </div>
+                <div>
+                    <h4>📊 Rúbrica de Evaluación</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th><input type="text" value="${datos?datos.c1:'Criterio 1'}"></th>
+                                <th><input type="text" value="${datos?datos.c2:'Criterio 2'}"></th>
+                                <th>Logro</th>
+                            </tr>
+                        </thead>
+                        <tbody class="cuerpo-notas"></tbody>
+                    </table>
+                    <button onclick="addAl(this)" style="margin-top:10px; cursor:pointer">+ Alumno</button>
+                </div>
+            </div>`;
+        document.getElementById('contenedor-sesiones').prepend(div);
+        if(datos) {
+            datos.alumnos.forEach(a => addAl(div.querySelector('button'), a.n, a.n1, a.n2, a.p));
+            renderArchivosSesion(id, div.querySelector('.file-list'));
+        } else { addAl(div.querySelector('button')); }
+    }
+
+    function addAl(btn, n='', n1='A', n2='A', p='--') {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" value="${n}" class="input-student"></td>
+            <td><select onchange="calc(this)"><option ${n1=='AD'?'selected':''}>AD</option><option ${n1=='A'?'selected':''}>A</option><option ${n1=='B'?'selected':''}>B</option><option ${n1=='C'?'selected':''}>C</option></select></td>
+            <td><select onchange="calc(this)"><option ${n2=='AD'?'selected':''}>AD</option><option ${n2=='A'?'selected':''}>A</option><option ${n2=='B'?'selected':''}>B</option><option ${n2=='C'?'selected':''}>C</option></select></td>
+            <td class="res"><b>${p}</b></td>`;
+        btn.parentElement.querySelector('tbody').appendChild(tr);
+    }
+
+    function calc(sel) {
+        const tr = sel.parentElement.parentElement;
+        const s = tr.querySelectorAll('select');
+        tr.querySelector('.res').innerText = inv[Math.round((esc[s[0].value] + esc[s[1].value])/2)];
+    }
+
+    function renderArchivosSesion(id, ul) {
+        ul.innerHTML = '';
+        const files = JSON.parse(localStorage.getItem(`file_s_${id}`)) || [];
+        files.forEach(f => {
+            ul.innerHTML += `<li class="file-item"><span class="file-name">📄 ${f.name}</span>
+                <div class="file-actions">
+                    <button class="btn-f btn-view" onclick='abrirArchivo("${f.data}", "${f.type}")'>VER</button>
+                    <a class="btn-f btn-down" href="${f.data}" download="${f.name}">BAJAR</a>
+                </div></li>`;
+        });
+    }
+
+    function guardarTodo() {
+        const sesiones = [];
+        document.querySelectorAll('#contenedor-sesiones .card').forEach(card => {
+            const alumnos = Array.from(card.querySelectorAll('.cuerpo-notas tr')).map(tr => ({
+                n: tr.querySelector('input').value, n1: tr.querySelectorAll('select')[0].value, n2: tr.querySelectorAll('select')[1].value, p: tr.querySelector('.res').innerText
+            }));
+            sesiones.push({ 
+                id: card.dataset.id, 
+                titulo: card.querySelector('input').value, 
+                c1: card.querySelectorAll('thead input')[0].value,
+                c2: card.querySelectorAll('thead input')[1].value,
+                alumnos 
+            });
+        });
+        localStorage.setItem(`data_sesiones_${grado}`, JSON.stringify(sesiones));
+        alert("¡Sistema Guardado Exitosamente!");
+    }
+
+    window.onload = () => { renderArchivosGeneral('plan'); renderArchivosGeneral('eda'); 
+        const saved = JSON.parse(localStorage.getItem(`data_sesiones_${grado}`)) || [];
+        saved.forEach(s => nuevaSesion(s));
+    };
+</script>
+</body>
+</html>
