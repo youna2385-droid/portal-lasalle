@@ -1,0 +1,29 @@
+:root { --primary-blue: #002855; --secondary-blue: #003a7a; --accent-gold: #ffc107; --soft-white: #f8f9fa; --white: #ffffff; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--soft-white); color: #333; }
+.login-body { background: linear-gradient(135deg, var(--primary-blue) 0%, #001a35 100%); display: flex; justify-content: center; align-items: center; height: 100vh; }
+.login-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 50px 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); width: 420px; text-align: center; }
+.star-logo { font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 10px; }
+.login-header h1 { color: var(--accent-gold); margin: 0; }
+.login-header p { color: white; opacity: 0.8; margin-bottom: 30px; }
+input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; }
+.btn-primary { width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--accent-gold); color: var(--primary-blue); font-weight: bold; cursor: pointer; }
+.sidebar { width: 280px; background: var(--primary-blue); color: white; padding: 25px; height: 100vh; position: fixed; display: flex; flex-direction: column; }
+.main { margin-left: 280px; padding: 40px; min-height: 100vh; }
+.nav-btn { background: none; border: none; color: white; width: 100%; text-align: left; padding: 12px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; }
+.nav-btn.active, .nav-btn:hover { background: rgba(255,255,255,0.1); color: var(--accent-gold); }
+.btn-nav-home { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; padding: 10px; border-radius: 8px; cursor: pointer; }
+.btn-nav-exit { background: none; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 10px; border-radius: 8px; cursor: pointer; }
+.btn-logout-red { background: #ff4d4d; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+.card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 4px solid var(--primary-blue); }
+.welcome-banner { background: var(--primary-blue); color: white; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 6px solid var(--accent-gold); }
+.section { display: none; }
+.section.active { display: block; }
+.grid-grados { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.btn-grado { background: white; color: var(--primary-blue); padding: 20px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
+th { background: #f0f4f8; padding: 10px; border: 1px solid #ddd; }
+td { padding: 8px; border: 1px solid #ddd; text-align: center; }
+.btn-add { background: var(--primary-blue); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.btn-save-all { background: #28a745; color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+.error-msg { color: #ff4d4d; display: none; margin-top: 10px; }

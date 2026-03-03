@@ -2,62 +2,39 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Portal Docente La Salle</title>
-    <style>
-        :root { --blue: #002855; --blue-light: #004b93; --gold: #ffc107; --white: #ffffff; }
-        body { 
-            margin: 0; font-family: 'Segoe UI', sans-serif; 
-            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
-            display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;
-        }
-        /* Fondo animado */
-        body::before {
-            content: ""; position: absolute; width: 150%; height: 150%;
-            background: radial-gradient(circle, rgba(255,193,7,0.1) 0%, transparent 70%);
-            animation: pulse 10s infinite alternate; z-index: -1;
-        }
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px;
-            padding: 60px; text-align: center; color: white; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            width: 85%; max-width: 1000px;
-        }
-        .logo-star { font-size: 5rem; color: var(--gold); margin-bottom: 10px; filter: drop-shadow(0 0 15px var(--gold)); }
-        h1 { font-size: 3rem; margin: 0; letter-spacing: 2px; text-transform: uppercase; }
-        p { font-size: 1.2rem; opacity: 0.8; margin-bottom: 40px; }
-
-        .grid-grados { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
-        .btn-grado {
-            background: rgba(255, 255, 255, 0.9); color: var(--blue); padding: 40px;
-            border-radius: 20px; font-size: 1.8rem; font-weight: bold; cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: none;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden;
-        }
-        .btn-grado::after {
-            content: "Primaria"; position: absolute; bottom: 10px; left: 0; right: 0;
-            font-size: 0.8rem; opacity: 0.5; text-transform: uppercase;
-        }
-        .btn-grado:hover {
-            background: var(--gold); color: var(--blue); transform: scale(1.05) translateY(-10px);
-            box-shadow: 0 20px 40px rgba(255, 193, 7, 0.4);
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Docente | La Salle</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="glass-panel">
-        <div class="logo-star">★</div>
-        <h1>Portal Curricular</h1>
-        <p>Hermanos de las Escuelas Cristianas - La Salle</p>
-        <div class="grid-grados">
-            <script>
-                for(let i=1; i<=6; i++) {
-                    document.write(`<button class="btn-grado" onclick="ir(${i})">${i}°</button>`);
-                }
-                function ir(n) { localStorage.setItem('gradoActual', n); window.location.href = 'grado.html'; }
-            </script>
+<body class="login-body">
+    <div id="login-screen" class="login-container">
+        <div class="login-header">
+            <div class="star-logo">★</div>
+            <h1>Colegio La Salle</h1>
+            <p>Sistema Público de Gestión</p>
+        </div>
+        <div class="login-form">
+            <input type="text" id="user" placeholder="Nombre de usuario" autocomplete="off">
+            <input type="password" id="pass" placeholder="Contraseña">
+            <button class="btn-primary" onclick="validar()">INGRESAR AL PORTAL</button>
+            <p id="error" class="error-msg">Credenciales incorrectas.</p>
         </div>
     </div>
+
+    <div id="portal-content" class="portal-selection" style="display:none">
+        <div class="star-logo small">★</div>
+        <h2 id="welcome-msg" style="color: #ffc107; margin-bottom: 5px;"></h2>
+        <p style="color: white; opacity: 0.9; margin-bottom: 30px;">Seleccione el grado para comenzar</p>
+        <div class="grid-grados">
+            <button class="btn-grado" onclick="ir(1)">1° Primaria</button>
+            <button class="btn-grado" onclick="ir(2)">2° Primaria</button>
+            <button class="btn-grado" onclick="ir(3)">3° Primaria</button>
+            <button class="btn-grado" onclick="ir(4)">4° Primaria</button>
+            <button class="btn-grado" onclick="ir(5)">5° Primaria</button>
+            <button class="btn-grado" onclick="ir(6)">6° Primaria</button>
+        </div>
+        <button class="btn-logout-red" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
