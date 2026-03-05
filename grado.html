@@ -7,40 +7,37 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="star-logo" style="font-size: 2rem; text-align:center;">★</div>
-        <h2 id="gradoTitle" style="text-align:center; color: #ffc107;">Cargando...</h2>
-        <div id="userDisplay" style="text-align:center; font-size: 0.8rem; margin-bottom: 20px; opacity: 0.7;"></div>
+        <div class="star-logo" style="font-size: 2.5rem; text-align:center; color:#ffc107">★</div>
+        <h2 id="gradoTitle" style="text-align:center;">Cargando...</h2>
+        <div id="userDisplay" style="text-align:center; font-size:0.8rem; margin-bottom:20px; opacity:0.8"></div>
         
         <nav class="nav-group">
-            <span class="nav-label">Menú de Gestión</span>
-            <button class="nav-btn active" id="btn-config" onclick="window.cambiarPestana('config', this)">👥 Lista Alumnos</button>
-            <button class="nav-btn" id="btn-plan" onclick="window.cambiarPestana('plan', this)">📄 Plan Anual</button>
-            <button class="nav-btn" id="btn-edas" onclick="window.cambiarPestana('edas', this)">🏗️ Mis EDAs</button>
-            <button class="nav-btn" id="btn-sesiones" onclick="window.cambiarPestana('sesiones', this)">🏃 Sesiones/Docs</button>
+            <button class="nav-btn active" onclick="window.cambiarPestana('config', this)">👥 Alumnos</button>
+            <button class="nav-btn" onclick="window.cambiarPestana('plan', this)">📄 Plan Anual</button>
+            <button class="nav-btn" onclick="window.cambiarPestana('edas', this)">🏗️ Mis EDAs</button>
+            <button class="nav-btn" onclick="window.cambiarPestana('sesiones', this)">🏃 Sesiones/Docs</button>
         </nav>
 
-        <div class="sidebar-footer" style="margin-top: auto; padding-top: 20px;">
-            <button onclick="window.location.href='index.html'" class="btn-nav-home" style="width:100%; margin-bottom:10px; cursor:pointer;">🏠 Inicio</button>
-            <button onclick="window.cerrarSesion()" class="btn-nav-exit" style="width:100%; cursor:pointer;">🔒 Salir</button>
+        <div class="sidebar-footer" style="margin-top:auto">
+            <button onclick="window.location.href='index.html'" class="btn-nav-home" style="width:100%; margin-bottom:10px;">🏠 Inicio</button>
+            <button onclick="window.cerrarSesion()" class="btn-nav-exit" style="width:100%;">🔒 Salir</button>
         </div>
     </aside>
 
     <main class="main">
-        <div id="txt-saludo" class="welcome-banner">Cargando datos de la nube...</div>
+        <div id="txt-saludo" class="welcome-banner">Cargando...</div>
 
         <section id="config" class="section active">
             <div class="card">
                 <h2>Nómina de Estudiantes</h2>
-                <p>Ingrese los nombres (uno por línea):</p>
-                <textarea id="lista-nombres" placeholder="Ejemplo:&#10;Juan Perez&#10;Maria Garcia"></textarea>
-                <button class="btn-primary" onclick="window.guardarNomina()">💾 Guardar en la Nube</button>
+                <textarea id="lista-nombres" placeholder="Escriba los nombres aquí..."></textarea>
+                <button class="btn-primary" onclick="window.guardarNomina()">💾 Guardar Nómina</button>
             </div>
         </section>
 
         <section id="plan" class="section" style="display:none;">
             <div class="card">
-                <h2>Plan Anual Curricular</h2>
-                <p>Suba el archivo principal del grado:</p>
+                <h2>Archivo del Plan Anual</h2>
                 <input type="file" onchange="window.subirPlan(this)">
                 <div id="status-plan" style="margin-top:20px;"></div>
             </div>
@@ -48,18 +45,17 @@
 
         <section id="edas" class="section" style="display:none;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h1>Experiencias de Aprendizaje</h1>
-                <button class="btn-add" onclick="window.nuevaEda()">+ Crear Nueva EDA</button>
+                <h1>Experiencias (EDAs)</h1>
+                <button class="btn-add" onclick="window.nuevaEda()">+ Nueva EDA</button>
             </div>
             <div id="contenedor-edas"></div>
         </section>
 
         <section id="sesiones" class="section" style="display:none;">
-            <h1>Sesiones de Clase y Archivos</h1>
+            <h1>Sesiones y Evidencias</h1>
             <div id="contenedor-sesiones-por-eda"></div>
         </section>
     </main>
-
     <script type="module" src="script.js"></script>
 </body>
 </html>

@@ -15,41 +15,38 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+const saludosGrados = {
+    1: "Hola Hno. Orlando y Hno. Boris", 2: "Hola Hno. Jonathan Añez",
+    3: "Hola Hno. Jhonatan Pinto", 4: "Hola Hno. Moises",
+    5: "Hola Hno. Sebastian", 6: "Hola Hno. Alejandro"
+};
+
 let datos = { edas: [], nomina: [], planAnual: {url: "", nombre: ""} };
 
 // --- NAVEGACIÓN ---
 window.cambiarPestana = (id, btn) => {
     document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    const target = document.getElementById(id);
-    if(target) target.style.display = 'block';
+    document.getElementById(id).style.display = 'block';
     if(btn) btn.classList.add('active');
 };
 
-// --- AUTH & SALUDOS ---
-const obtenerSaludo = (user) => {
-    if (user === "victor") return "Hola Prof. Victor";
-    return "Hola Hno. " + user.charAt(0).toUpperCase() + user.slice(1);
-};
-
+// --- AUTH ---
 window.validar = () => {
     const u = document.getElementById('user').value.toLowerCase().trim();
     const p = document.getElementById('pass').value.trim();
     const users = {"jonathan":"Jona2004", "orlando":"Orla2000", "sebastian":"Seba2007", "moises":"Mois2000", "jhonatan":"Jhon2004", "boris":"Bori2005", "alejandro":"Alej1999", "victor":"Victor1985"};
-    
     if(users[u] === p) {
         sessionStorage.setItem('auth', 'true');
         sessionStorage.setItem('user', u);
         location.reload();
-    } else {
-        document.getElementById('error').style.display = 'block';
-    }
+    } else document.getElementById('error').style.display='block';
 };
 
 window.ir = (n) => { localStorage.setItem('grado', n); window.location.href='grado.html'; };
 window.cerrarSesion = () => { sessionStorage.clear(); window.location.href='index.html'; };
 
-// --- BASE DE DATOS (SIN SOBRESCRITURA POR ERROR) ---
+// --- DATOS ---
 async function cargar() {
     const g = localStorage.getItem('grado');
     if(!g) return;
@@ -58,52 +55,33 @@ async function cargar() {
             datos = snap.data();
             renderTodo();
         } else {
-            // Solo crea si el documento es totalmente nuevo
             setDoc(doc(db, "grados", `g${g}`), {edas:[], nomina:[], planAnual:{url:"", nombre:""}});
         }
     });
 }
 
 async function guardar() {
-    const g = localStorage.getItem('grado');
-    await setDoc(doc(db, "grados", `g${g}`), datos);
+    await setDoc(doc(db, "grados", `g${localStorage.getItem('grado')}`), datos);
 }
 
-// --- FUNCIONES DOCENTES ---
+// --- ACCIONES ---
 window.guardarNomina = async () => {
-    const areaTexto = document.getElementById('lista-nombres');
-    if(areaTexto) {
-        datos.nomina = areaTexto.value.split('\n').filter(n=>n.trim()!=="");
-        await guardar();
-        alert("Nómina guardada con éxito");
-    }
+    datos.nomina = document.getElementById('lista-nombres').value.split('\n').filter(n=>n.trim()!=="");
+    await guardar(); alert("Nómina guardada");
 };
 
 window.subirPlan = async (input) => {
     const file = input.files[0];
     if(!file) return;
-    const btn = input.previousElementSibling;
-    if(btn) btn.innerText = "⏳ Subiendo...";
-
-    try {
-        const sRef = ref(storage, `g${localStorage.getItem('grado')}/plan_${Date.now()}_${file.name}`);
-        await uploadBytes(sRef, file);
-        const url = await getDownloadURL(sRef);
-        datos.planAnual = { url: url, nombre: file.name };
-        await guardar();
-        alert("Plan Anual guardado en la nube");
-    } catch (e) {
-        alert("Error al subir archivo");
-    }
+    const sRef = ref(storage, `g${localStorage.getItem('grado')}/plan_${Date.now()}`);
+    await uploadBytes(sRef, file);
+    datos.planAnual = { url: await getDownloadURL(sRef), nombre: file.name };
+    await guardar(); alert("Plan subido");
 };
 
 window.nuevaEda = async () => {
     const n = prompt("Nombre de la EDA:");
-    if(n) {
-        if(!datos.edas) datos.edas = [];
-        datos.edas.push({ nombre: n, sesiones: [] });
-        await guardar();
-    }
+    if(n) { datos.edas.push({ nombre: n, sesiones: [] }); await guardar(); }
 };
 
 window.nuevaSesion = async (eI) => {
@@ -115,91 +93,58 @@ window.nuevaSesion = async (eI) => {
 window.subirArchivoSesion = async (eI, sI, input) => {
     const file = input.files[0];
     if(!file) return;
-    try {
-        const sRef = ref(storage, `g${localStorage.getItem('grado')}/sesion_${Date.now()}_${file.name}`);
-        await uploadBytes(sRef, file);
-        datos.edas[eI].sesiones[sI].archivoUrl = await getDownloadURL(sRef);
-        datos.edas[eI].sesiones[sI].archivoNombre = file.name;
-        await guardar();
-        alert("Sesión sincronizada");
-    } catch (e) { alert("Error al subir"); }
+    const sRef = ref(storage, `g${localStorage.getItem('grado')}/sesion_${Date.now()}`);
+    await uploadBytes(sRef, file);
+    datos.edas[eI].sesiones[sI].archivoUrl = await getDownloadURL(sRef);
+    datos.edas[eI].sesiones[sI].archivoNombre = file.name;
+    await guardar();
 };
 
-// --- RENDERIZADO (CORREGIDO PARA NO REPETIR) ---
 function renderTodo() {
     const g = localStorage.getItem('grado');
     const user = sessionStorage.getItem('user');
     if(!document.getElementById('gradoTitle')) return;
 
     document.getElementById('gradoTitle').innerText = `${g}° Primaria`;
-    document.getElementById('userDisplay').innerText = `Usuario: ${user}`;
-    document.getElementById('txt-saludo').innerText = obtenerSaludo(user);
-    
-    // Solo actualizar nómina si estamos en esa pestaña para evitar saltos de cursor
-    const inputNomina = document.getElementById('lista-nombres');
-    if(inputNomina && datos.nomina) {
-        // Solo actualizamos si el usuario no está escribiendo actualmente
-        if (document.activeElement !== inputNomina) {
-            inputNomina.value = datos.nomina.join('\n');
-        }
-    }
+    document.getElementById('txt-saludo').innerText = (user === "victor") ? "Hola Prof. Victor" : (saludosGrados[g] || "Hola");
+    document.getElementById('userDisplay').innerText = "Sesión: " + user;
 
-    // Render Plan Anual
+    // Nómina (solo en su pestaña)
+    const txtNom = document.getElementById('lista-nombres');
+    if(txtNom && document.activeElement !== txtNom) txtNom.value = (datos.nomina || []).join('\n');
+
+    // Plan Anual
     const stPlan = document.getElementById('status-plan');
     if(datos.planAnual && datos.planAnual.url) {
-        stPlan.innerHTML = `<div class="card-file">
-            <span>✅ Archivo actual: <strong>${datos.planAnual.nombre}</strong></span>
-            <br><br>
-            <a href="${datos.planAnual.url}" target="_blank" class="btn-view">👁️ Abrir Plan Anual</a>
-        </div>`;
+        stPlan.innerHTML = `<a href="${datos.planAnual.url}" target="_blank" style="color:blue; font-weight:bold;">📄 Ver: ${datos.planAnual.nombre}</a>`;
     }
 
-    // Render EDAs (Solo nombres)
-    const cEdas = document.getElementById('contenedor-edas');
-    cEdas.innerHTML = "";
-    (datos.edas || []).forEach(eda => {
-        cEdas.innerHTML += `<div class="card"><h3>📦 ${eda.nombre}</h3></div>`;
-    });
-
-    // Render Sesiones (Con archivos)
+    // Sesiones
     const cSes = document.getElementById('contenedor-sesiones-por-eda');
     cSes.innerHTML = "";
     (datos.edas || []).forEach((eda, eI) => {
-        const div = document.createElement('div');
-        div.className = "eda-group";
-        div.innerHTML = `<h3 class="eda-header">${eda.nombre}</h3><button class="btn-add" onclick="window.nuevaSesion(${eI})">+ Añadir Sesión</button>`;
-        
+        const d = document.createElement('div');
+        d.innerHTML = `<h3 style="background:var(--blue); color:white; padding:10px; border-radius:5px; margin-top:20px;">${eda.nombre}</h3>
+                       <button class="btn-add" onclick="window.nuevaSesion(${eI})">+ Añadir Sesión</button>`;
         (eda.sesiones || []).forEach((ses, sI) => {
-            const sCard = document.createElement('div');
-            sCard.className = "card-sesion";
-            sCard.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span><strong>${ses.titulo}</strong></span>
-                    <div class="actions">
-                        <label class="btn-file">
-                            <span>${ses.archivoNombre ? '📎 '+ses.archivoNombre : '📁 Subir'}</span>
-                            <input type="file" style="display:none" onchange="window.subirArchivoSesion(${eI},${sI},this)">
-                        </label>
-                        ${ses.archivoUrl ? `<a href="${ses.archivoUrl}" target="_blank" class="link-view">👁️ Ver</a>` : ''}
-                    </div>
-                </div>`;
-            div.appendChild(sCard);
+            d.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; margin-top:10px;">
+                <span>${ses.titulo}</span>
+                <div>
+                    <input type="file" style="font-size:0.7rem" onchange="window.subirArchivoSesion(${eI},${sI},this)">
+                    ${ses.archivoUrl ? `<a href="${ses.archivoUrl}" target="_blank">👁️</a>` : ''}
+                </div>
+            </div>`;
         });
-        cSes.appendChild(div);
+        cSes.appendChild(d);
     });
 }
 
-// ARRANQUE
 window.onload = () => {
-    if(window.location.pathname.includes('grado.html')) {
-        if(!sessionStorage.getItem('auth')) window.location.href='index.html';
-        cargar();
-    } else {
-        const portal = document.getElementById('portal-content');
-        if(sessionStorage.getItem('auth') && portal) {
-            document.getElementById('login-screen').style.display='none';
-            portal.style.display='block';
-            document.getElementById('welcome-msg').innerText = obtenerSaludo(sessionStorage.getItem('user'));
-        }
+    if(window.location.pathname.includes('grado.html')) cargar();
+    else if(sessionStorage.getItem('auth')) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('portal-content').style.display = 'block';
+        const user = sessionStorage.getItem('user');
+        document.getElementById('welcome-msg').innerText = (user === "victor") ? "Hola Prof. Victor" : "Bienvenido Hno. " + user;
     }
 };
