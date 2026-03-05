@@ -5,60 +5,61 @@
     <title>Panel de Grado | La Salle</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="dashboard-body">
+<body>
     <aside class="sidebar">
-        <h2 id="gradoTitle">Grado</h2>
-        <div id="userDisplay" class="user-tag"></div>
-        <div class="nav-group">
-            <span class="nav-label">Configuración</span>
-            <button class="nav-btn active" onclick="show('config', this)">👥 Alumnos</button>
-        </div>
-        <div class="nav-group">
-            <span class="nav-label">Planificación</span>
-            <button class="nav-btn" onclick="show('edas', this)">🏗️ Mis EDAs</button>
-        </div>
-        <div class="nav-group">
-            <span class="nav-label">Evaluación</span>
-            <button class="nav-btn" onclick="show('sesiones', this)">🏃 Sesiones y Archivos</button>
-            <button class="nav-btn" onclick="show('final', this); renderRegistroFinal()">📊 Registro Notas</button>
-        </div>
-        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="window.location.href='index.html'" class="btn-nav-home">🏠 Inicio</button>
-            <button onclick="cerrarSesion()" class="btn-nav-exit">🔒 Salir</button>
+        <div class="star-logo" style="font-size: 2rem; text-align:center;">★</div>
+        <h2 id="gradoTitle" style="text-align:center; color: #ffc107;">Cargando...</h2>
+        <div id="userDisplay" style="text-align:center; font-size: 0.8rem; margin-bottom: 20px; opacity: 0.7;"></div>
+        
+        <nav class="nav-group">
+            <span class="nav-label">Menú de Gestión</span>
+            <button class="nav-btn active" id="btn-config" onclick="window.cambiarPestana('config', this)">👥 Lista Alumnos</button>
+            <button class="nav-btn" id="btn-plan" onclick="window.cambiarPestana('plan', this)">📄 Plan Anual</button>
+            <button class="nav-btn" id="btn-edas" onclick="window.cambiarPestana('edas', this)">🏗️ Mis EDAs</button>
+            <button class="nav-btn" id="btn-sesiones" onclick="window.cambiarPestana('sesiones', this)">🏃 Sesiones/Docs</button>
+        </nav>
+
+        <div class="sidebar-footer" style="margin-top: auto; padding-top: 20px;">
+            <button onclick="window.location.href='index.html'" class="btn-nav-home" style="width:100%; margin-bottom:10px; cursor:pointer;">🏠 Inicio</button>
+            <button onclick="window.cerrarSesion()" class="btn-nav-exit" style="width:100%; cursor:pointer;">🔒 Salir</button>
         </div>
     </aside>
 
     <main class="main">
-        <div class="welcome-banner"><h3 id="txt-saludo"></h3></div>
+        <div id="txt-saludo" class="welcome-banner">Cargando datos de la nube...</div>
 
-        <div id="config" class="section active">
-            <h1>Nómina del Grado</h1>
+        <section id="config" class="section active">
             <div class="card">
-                <textarea id="lista-nombres" placeholder="Nombres de alumnos (uno por línea)..."></textarea>
-                <button class="btn-save-all" onclick="guardarNomina()">💾 Sincronizar Alumnos</button>
+                <h2>Nómina de Estudiantes</h2>
+                <p>Ingrese los nombres (uno por línea):</p>
+                <textarea id="lista-nombres" placeholder="Ejemplo:&#10;Juan Perez&#10;Maria Garcia"></textarea>
+                <button class="btn-primary" onclick="window.guardarNomina()">💾 Guardar en la Nube</button>
             </div>
-        </div>
+        </section>
 
-        <div id="edas" class="section">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h1>Experiencias (EDAs)</h1>
-                <button class="btn-add" onclick="nuevaEda()">+ Nueva EDA</button>
+        <section id="plan" class="section" style="display:none;">
+            <div class="card">
+                <h2>Plan Anual Curricular</h2>
+                <p>Suba el archivo principal del grado:</p>
+                <input type="file" onchange="window.subirPlan(this)">
+                <div id="status-plan" style="margin-top:20px;"></div>
+            </div>
+        </section>
+
+        <section id="edas" class="section" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h1>Experiencias de Aprendizaje</h1>
+                <button class="btn-add" onclick="window.nuevaEda()">+ Crear Nueva EDA</button>
             </div>
             <div id="contenedor-edas"></div>
-        </div>
+        </section>
 
-        <div id="sesiones" class="section">
-            <h1>Sesiones y Evidencias</h1>
+        <section id="sesiones" class="section" style="display:none;">
+            <h1>Sesiones de Clase y Archivos</h1>
             <div id="contenedor-sesiones-por-eda"></div>
-        </div>
-
-        <div id="final" class="section">
-            <h1>Registro Auxiliar Sincronizado</h1>
-            <div class="card" style="overflow-x: auto;">
-                <table><thead id="head-final"></thead><tbody id="body-final"></tbody></table>
-            </div>
-        </div>
+        </section>
     </main>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>

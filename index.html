@@ -3,37 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal La Salle | Inicio</title>
+    <title>Portal La Salle | Acceso</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-body">
     <div id="login-screen" class="login-container">
-        <div class="login-header">
-            <div class="star-logo">★</div>
-            <h1>Colegio La Salle</h1>
-            <p>Acceso a Gestión Curricular</p>
-        </div>
-        <div class="login-form">
-            <input type="text" id="user" placeholder="Usuario">
-            <input type="password" id="pass" placeholder="Contraseña">
-            <button class="btn-primary" onclick="validar()">ENTRAR</button>
-            <p id="error" class="error-msg">Credenciales incorrectas.</p>
-        </div>
+        <div class="star-logo">★</div>
+        <h1>La Salle</h1>
+        <p>Gestión Docente 2026</p>
+        <input type="text" id="user" placeholder="Usuario">
+        <input type="password" id="pass" placeholder="Contraseña">
+        <button class="btn-primary" onclick="window.validar()">INGRESAR</button>
+        <p id="error" class="error-msg" style="display:none; color:red; margin-top:10px;">Datos incorrectos</p>
     </div>
 
-    <div id="portal-content" class="portal-selection" style="display:none">
-        <div class="star-logo small">★</div>
-        <h2 id="welcome-msg"></h2>
+    <div id="portal-content" class="login-container" style="display:none; width: 500px;">
+        <div class="star-logo" style="font-size: 2rem;">★</div>
+        <h2 id="welcome-msg" style="color: #002855;"></h2>
+        <p style="margin-bottom: 20px; color: #666;">Seleccione el grado a gestionar:</p>
         <div class="grid-grados">
-            <button class="btn-grado" onclick="ir(1)">1° Primaria</button>
-            <button class="btn-grado" onclick="ir(2)">2° Primaria</button>
-            <button class="btn-grado" onclick="ir(3)">3° Primaria</button>
-            <button class="btn-grado" onclick="ir(4)">4° Primaria</button>
-            <button class="btn-grado" onclick="ir(5)">5° Primaria</button>
-            <button class="btn-grado" onclick="ir(6)">6° Primaria</button>
+            <button class="btn-grado" onclick="window.ir(1)">1° Primaria</button>
+            <button class="btn-grado" onclick="window.ir(2)">2° Primaria</button>
+            <button class="btn-grado" onclick="window.ir(3)">3° Primaria</button>
+            <button class="btn-grado" onclick="window.ir(4)">4° Primaria</button>
+            <button class="btn-grado" onclick="window.ir(5)">5° Primaria</button>
+            <button class="btn-grado" onclick="window.ir(6)">6° Primaria</button>
         </div>
-        <button class="btn-logout-red" onclick="cerrarSesion()">Cerrar Sesión</button>
+        <button class="btn-nav-exit" onclick="window.cerrarSesion()" style="margin-top:20px; width: 100%;">Cerrar Sesión</button>
     </div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>
