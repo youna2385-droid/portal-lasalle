@@ -8,7 +8,7 @@
 </head>
 <body class="login-body">
     <div id="login-screen" class="login-container">
-        <div class="star-logo">★</div>
+        <img src="logo.png" alt="Logo La Salle" class="logo-img">
         <h1>La Salle</h1>
         <p>Gestión Docente 2026</p>
         <input type="text" id="user" placeholder="Usuario">
@@ -18,8 +18,9 @@
     </div>
 
     <div id="portal-content" class="login-container" style="display:none; width: 500px;">
-        <div class="star-logo" style="font-size: 2rem;">★</div>
+        <img src="logo.png" alt="Logo La Salle" class="logo-img-small">
         <h2 id="welcome-msg" style="color: #002855;"></h2>
+        <p style="margin-bottom: 20px; color: #666;">Seleccione el grado a gestionar:</p>
         <div class="grid-grados">
             <button class="btn-grado" onclick="window.ir(1)">1° Primaria</button>
             <button class="btn-grado" onclick="window.ir(2)">2° Primaria</button>
@@ -30,6 +31,7 @@
         </div>
         <button class="btn-nav-exit" onclick="window.cerrarSesion()" style="margin-top:20px; width: 100%;">Cerrar Sesión</button>
     </div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>
