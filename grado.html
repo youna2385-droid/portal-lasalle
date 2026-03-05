@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Grado | La Salle</title>
+    <title>Panel de Grado | La Salle</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dashboard-body">
@@ -11,8 +11,7 @@
         <div id="userDisplay" class="user-tag"></div>
         <div class="nav-group">
             <span class="nav-label">Configuración</span>
-            <button class="nav-btn active" onclick="show('config', this)">👥 Alumnos y Datos</button>
-            <button class="nav-btn" onclick="show('plan', this)">📄 Plan Anual</button>
+            <button class="nav-btn active" onclick="show('config', this)">👥 Alumnos</button>
         </div>
         <div class="nav-group">
             <span class="nav-label">Planificación</span>
@@ -20,12 +19,12 @@
         </div>
         <div class="nav-group">
             <span class="nav-label">Evaluación</span>
-            <button class="nav-btn" onclick="show('sesiones', this)">🏃 Sesiones</button>
+            <button class="nav-btn" onclick="show('sesiones', this)">🏃 Sesiones y Archivos</button>
             <button class="nav-btn" onclick="show('final', this); renderRegistroFinal()">📊 Registro Notas</button>
         </div>
         <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="window.location.href='index.html'" class="btn-nav-home">🏠 Volver al Inicio</button>
-            <button onclick="cerrarSesion()" class="btn-nav-exit">🔒 Cerrar Sesión</button>
+            <button onclick="window.location.href='index.html'" class="btn-nav-home">🏠 Inicio</button>
+            <button onclick="cerrarSesion()" class="btn-nav-exit">🔒 Salir</button>
         </div>
     </aside>
 
@@ -33,52 +32,33 @@
         <div class="welcome-banner"><h3 id="txt-saludo"></h3></div>
 
         <div id="config" class="section active">
-            <h1>Gestión de Datos</h1>
+            <h1>Nómina del Grado</h1>
             <div class="card">
-                <h3>Sincronización Pública</h3>
-                <p style="font-size: 0.9rem; color: #666;">Para compartir datos con otros Hermanos, exporta el archivo y envíaselo.</p>
-                <div style="display:flex; gap:10px; margin: 15px 0;">
-                    <button class="btn-add" onclick="exportarDatos()">📤 Exportar Datos</button>
-                    <label class="btn-add" style="background:#6c757d; cursor:pointer;">📥 Cargar Datos <input type="file" id="importFile" style="display:none" onchange="importarDatos(this)"></label>
-                </div>
-                <hr>
-                <h3>Nómina de Estudiantes</h3>
-                <textarea id="lista-nombres" style="width:100%; height:200px; margin-top:10px; padding:10px;"></textarea>
-                <button class="btn-save-all" style="width:auto; padding:10px 20px;" onclick="guardarNomina()">💾 Guardar Nómina</button>
-            </div>
-        </div>
-
-        <div id="plan" class="section">
-            <h1>Plan Anual Curricular</h1>
-            <div class="card">
-                <input type="file" multiple onchange="actDocPlan(this)">
-                <div id="lista-plan-anual" style="margin-top:15px;"></div>
+                <textarea id="lista-nombres" placeholder="Nombres de alumnos (uno por línea)..."></textarea>
+                <button class="btn-save-all" onclick="guardarNomina()">💾 Sincronizar Alumnos</button>
             </div>
         </div>
 
         <div id="edas" class="section">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h1>Experiencias de Aprendizaje</h1>
-                <button class="btn-add" onclick="nuevaEda()">+ Añadir EDA</button>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h1>Experiencias (EDAs)</h1>
+                <button class="btn-add" onclick="nuevaEda()">+ Nueva EDA</button>
             </div>
             <div id="contenedor-edas"></div>
         </div>
 
         <div id="sesiones" class="section">
-            <h1>Sesiones de Clase</h1>
+            <h1>Sesiones y Evidencias</h1>
             <div id="contenedor-sesiones-por-eda"></div>
         </div>
 
         <div id="final" class="section">
-            <h1>Registro Auxiliar de Notas</h1>
+            <h1>Registro Auxiliar Sincronizado</h1>
             <div class="card" style="overflow-x: auto;">
-                <table id="tabla-final">
-                    <thead><tr id="head-final"></tr></thead>
-                    <tbody id="body-final"></tbody>
-                </table>
+                <table><thead id="head-final"></thead><tbody id="body-final"></tbody></table>
             </div>
         </div>
     </main>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

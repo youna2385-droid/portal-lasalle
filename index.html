@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Docente | La Salle</title>
+    <title>Portal La Salle | Inicio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-body">
@@ -11,20 +11,19 @@
         <div class="login-header">
             <div class="star-logo">★</div>
             <h1>Colegio La Salle</h1>
-            <p>Sistema Público de Gestión</p>
+            <p>Acceso a Gestión Curricular</p>
         </div>
         <div class="login-form">
-            <input type="text" id="user" placeholder="Nombre de usuario" autocomplete="off">
+            <input type="text" id="user" placeholder="Usuario">
             <input type="password" id="pass" placeholder="Contraseña">
-            <button class="btn-primary" onclick="validar()">INGRESAR AL PORTAL</button>
+            <button class="btn-primary" onclick="validar()">ENTRAR</button>
             <p id="error" class="error-msg">Credenciales incorrectas.</p>
         </div>
     </div>
 
     <div id="portal-content" class="portal-selection" style="display:none">
         <div class="star-logo small">★</div>
-        <h2 id="welcome-msg" style="color: #ffc107; margin-bottom: 5px;"></h2>
-        <p style="color: white; opacity: 0.9; margin-bottom: 30px;">Seleccione el grado para comenzar</p>
+        <h2 id="welcome-msg"></h2>
         <div class="grid-grados">
             <button class="btn-grado" onclick="ir(1)">1° Primaria</button>
             <button class="btn-grado" onclick="ir(2)">2° Primaria</button>
@@ -35,6 +34,6 @@
         </div>
         <button class="btn-logout-red" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
